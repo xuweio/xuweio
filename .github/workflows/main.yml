@@ -21,7 +21,7 @@ jobs:
     - name: Setup Node            # 安装 Node 环境
       uses: actions/setup-node@v2-beta
       with:
-        node-version: "12"
+        node-version: "12.x"
 
         - name: Setup Hexo env
       env:
