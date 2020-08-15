@@ -39,7 +39,7 @@ jobs:
         npm i -g hexo-cli # 安装hexo
         npm i
         cd themes/typography/ # 主题目录 我这里就是themes/landscape
-        npm i # 安装子主题
+        npm i 
         
     - name: Deploy
       run: |
