@@ -1,0 +1,52 @@
+name: Deploy                      # Actions 显示的名字，随意设置
+
+on: [push]                        # 监听到 push 事件后触发
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout              # 拉取当前执行 Actions 仓库的指定分支
+      uses: actions/checkout@v2
+      with:
+        ref: master
+
+    - name: Update Submodule      # 如果仓库有 submodule，在这里更新，没有则删掉此步骤
+      run: |
+        git submodule init
+        git submodule update --remote
+
+    - name: Setup Node            # 安装 Node 环境
+      uses: actions/setup-node@v2-beta
+      with:
+        node-version: "12"
+
+
+      
+        
+        - name: Setup Hexo env
+      env:
+        ACTION_DEPLOY_KEY: ${{ secrets.ACTION_DEPLOY_KEY }}
+      run: |
+        # set up private key for deploy
+        mkdir -p ~/.ssh/
+        echo "$ACTION_DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa # 配置秘钥
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        # set git infomation
+        git config --global user.name 'xuweio'
+        git config --global user.email 'xuweio@gmail.com'
+        # install dependencies
+        npm i -g hexo-cli # 安装hexo
+        npm i
+        cd themes/typography/ # 主题目录 我这里就是themes/landscape
+        npm i # 安装子主题
+​
+    - name: Deploy
+      run: |
+        # publish
+        npm install hexo-deployer-git # 安装deployer
+        hexo clean # 清空以前的生成页面
+        hexo deploy --generate # 生成静态页面并发布
