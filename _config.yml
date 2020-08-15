@@ -102,5 +102,12 @@ theme: landscape
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
+
+# Deployment
+deploy:
+  type: git
+  repository: https://github.com/xuweio/xuweio.git # 这里更改为你仓库的SSH地址
+  branch: gh-pages branch
+  
 deploy:
   type: ''
