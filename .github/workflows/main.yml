@@ -23,9 +23,6 @@ jobs:
       with:
         node-version: "12"
 
-
-      
-        
         - name: Setup Hexo env
       env:
         ACTION_DEPLOY_KEY: ${{ secrets.ACTION_DEPLOY_KEY }}
@@ -43,7 +40,7 @@ jobs:
         npm i
         cd themes/typography/ # 主题目录 我这里就是themes/landscape
         npm i # 安装子主题
-​
+        
     - name: Deploy
       run: |
         # publish
