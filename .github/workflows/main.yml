@@ -23,27 +23,24 @@ jobs:
       with:
         node-version: "12"
 
-     - name: Setup Hexo env
-      env:
-        ACTION_DEPLOY_KEY: ${{ secrets.ACTION_DEPLOY_KEY }}
+    - name: Hexo Generate         # 安装 Hexo 依赖并且生成静态文件
       run: |
-        # set up private key for deploy
+        rm -f .yarnclean
+        yarn --frozen-lockfile --ignore-engines --ignore-optional --non-interactive --silent --ignore-scripts --production=false
+        rm -rf ./public
+        yarn run hexo clean
+        yarn run hexo generate
+
+    - name: Hexo Deploy           # 部署步骤，这里以 hexo deploy 为例
+      env:
+        SSH_PRIVATE: ${{ secrets.SSH_PRIVATE }}
+        GIT_NAME: xuweio
+        GIT_EMAIL: xuweio@gmail.com
+      run: |
         mkdir -p ~/.ssh/
-        echo "$ACTION_DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa # 配置秘钥
+        echo "$SSH_PRIVATE" | tr -d '\r' > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan github.com >> ~/.ssh/known_hosts
-        # set git infomation
-        git config --global user.name 'xuweio'
-        git config --global user.email 'xuweio@gmail.com'
-        # install dependencies
-        npm i -g hexo-cli # 安装hexo
-        npm i
-        cd themes/typography/ # 主题目录 我这里就是themes/landscape
-        npm i # 安装子主题
-​
-    - name: Deploy
-      run: |
-        # publish
-        npm install hexo-deployer-git # 安装deployer
-        hexo clean # 清空以前的生成页面
-        hexo deploy --generate # 生成静态页面并发布
+        git config --global user.name "xuweio"
+        git config --global user.email "xuweio@gmail"
+        yarn run hexo deploy
